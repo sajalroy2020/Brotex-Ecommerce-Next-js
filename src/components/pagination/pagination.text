@@ -1,0 +1,534 @@
+'use client'
+import { useEffect, useState } from "react";
+import ReactPaginate from 'react-paginate';
+import './pagination.css';
+
+const Pagination=(props)=>{
+   const {data} = props;
+
+  const [currentItems, setCurrentItems] = useState([]);
+  const [pageCount, setPageCount] = useState(0);
+  const [itemOffset, setItemOffset] = useState(0);
+  const itemsPerPage = 10;
+
+  useEffect(() => {
+    const endOffset = itemOffset + itemsPerPage;
+    setCurrentItems(data.slice(itemOffset, endOffset));
+    setPageCount(Math.ceil(data.length / itemsPerPage));
+  }, [itemOffset, itemsPerPage, data]);
+
+  const handlePageClick = (event) => {
+    const newOffset = event.selected * itemsPerPage;
+    setItemOffset(newOffset);
+  };
+
+  
+  return (
+    <>
+     
+      <ReactPaginate
+        breakLabel="..."
+        nextLabel=">"
+        onPageChange={handlePageClick}
+				pageRangeDisplayed={1}
+        pageCount={pageCount}
+        previousLabel="<"
+        renderOnZeroPageCount={null}
+        containerClassName="pagination"
+        pageLinkClassName="page-num"
+        nextLinkClassName="page-num"
+        previousLinkClassName="page-num"
+        activeClassName="active"
+      />
+    </>
+  );
+}
+
+export default Pagination;
+
+
+// ================================================
+
+
+'use client'
+import LogoSlider from "../../components/logoSlider";
+import axios from "axios";
+import Image from 'next/image'
+import Link from 'next/link'
+import { MdOutlineFavorite } from 'react-icons/md';
+import { MdOutlineKeyboardDoubleArrowLeft } from 'react-icons/md';
+import { useEffect, useState } from "react";
+import { MdKeyboardArrowDown, } from 'react-icons/md'
+import { toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
+import { product, category, color, productTypeFilter, productType, singleProduct, productCategoryFilter, getCartProduct, addwishlistProduct, removeProduct } from "../../../servises/action/product";
+import { useDispatch, useSelector } from "react-redux";
+import { getCart, removeItem } from "../../../features/CartSlice";
+import { RxCrossCircled } from 'react-icons/rx';
+import { filterCategoryProduct } from "../../../features/productSlice";
+import { useRouter } from "next/navigation";
+import ReactPaginate from 'react-paginate';
+import Loader from "../../components/loaders/loader";
+import SingleProductDetails from "@/components/product_details";
+import Pagination from "@/components/pagination/pagination";
+import '../../components/pagination/pagination.css';
+
+const AllProduct =({searchParams})=> {
+    const [allProduct, setAllProduct] = useState([]);
+    const [loading, setLoading] = useState(false);
+    const cartProduct = useSelector((state) => state.cart.cart);
+	const products = useSelector((state) => state.products.products);
+    const [categories, setCategory] = useState([]);
+    const [productTypes, setProductTypes] = useState([]);
+    const [colors, setColors] = useState([]);
+    const [checkCategory, setCheckCategory] = useState(false);
+    const [searchKey, setSearchKey] = useState([]);
+    const dispatch = useDispatch();
+	const router = useRouter();
+	const [ip, setIP] = useState("");
+    const [singleProducts, setSingleProducts] = useState(false);
+    const [singleProductShow, setSingleProductShow] = useState({});
+
+
+	// pagination start 
+	const [currentItems, setCurrentItems] = useState([]);
+	const [pageCount, setPageCount] = useState(0);
+	const [itemOffset, setItemOffset] = useState(0);
+	const itemsPerPage = 10;
+  
+	useEffect(() => {
+	  const endOffset = itemOffset + itemsPerPage;
+	  setCurrentItems(allProduct.slice(itemOffset, endOffset));
+	  setPageCount(Math.ceil(allProduct.length / itemsPerPage));
+	}, [itemOffset, itemsPerPage, allProduct]);
+  
+	const handlePageClick = (event) => {
+	  const newOffset = event.selected * itemsPerPage;
+	  setItemOffset(newOffset);
+	};
+	// pagination end 
+
+
+	const showProduct = async (slug) => {
+			setSingleProducts(true);
+		try {
+            const { data } = await singleProduct(slug);
+            setSingleProductShow(data.product);
+			setLoading(true);
+        } catch (error) {
+            console.error(error);
+        }
+	}
+	
+	const getData = async () => {
+		const res = await axios.get("https://api.ipify.org/?format=json");
+		setIP(res.data.ip);
+	};
+
+	const removeWishlistProduct = async (id, p_id) =>{
+		try {
+			const { data } = await removeProduct(id);
+			dispatch(removeItem(id))
+			showRemoveMessage();
+			showRemoveMessage();
+		} catch (error) {
+			console.error(error);
+		}
+	}
+
+	// const removeWishlistProduct = async (id, p_id) =>{
+	// 	if (id=="") {
+	// 		try {
+	// 			const { data } = await removeProduct(p_id);
+	// 			showRemoveMessage();
+	// 		} catch (error) {
+	// 			console.error(error);
+	// 		}
+	// 	}else{
+	// 		dispatch(removeItem(id))
+	// 		showRemoveMessage();
+	// 	}
+	// }
+
+	function showRemoveMessage() {
+		toast.success('Product remove successfully !', {
+			position: toast.POSITION.TOP_RIGHT
+		});
+	  };
+
+	const getProduct = async (currentPage) => {
+        try {
+            const { data } = await product(currentPage);
+			setAllProduct(data.product);
+			setLoading(true);
+        } catch (error) {
+            console.error(error);
+        }
+    };
+
+	const getCategory = async () => {
+        try {
+            const { data } = await category();
+            setCategory(data.categories);
+        } catch (error) {
+            console.error(error);
+        }
+    };
+
+	const getProductType = async () => {
+        try {
+            const { data } = await productType();
+            setProductTypes(data.product_type);
+        } catch (error) {
+            console.error(error);
+        }
+    };
+
+	const getColor = async () => {
+        try {
+            const { data } = await color();
+            setColors(data.color);
+        } catch (error) {
+            console.error(error);
+        }
+    };
+
+	const getProductTypeFilter = async (searchTypeKey) => {
+        try {
+            const { data } = await productTypeFilter(searchTypeKey);
+            setAllProduct(data.product.data);
+			searchKey.push(searchTypeKey);
+			setCheckCategory(true);
+        } catch (error) {
+            console.error(error);
+        }
+    };
+
+	const getProductCategoryFilter = async (slug) => {
+        try {
+            const { data } = await productCategoryFilter(slug);
+            setAllProduct(data.product.data);
+			searchKey.push(slug);
+			setCheckCategory(true);
+        } catch (error) {
+            console.error(error);
+        }
+    };
+
+	const addToCart = async (items, id, ip) => {
+		const wishlistProduct ={
+			"ip_address": ip,
+			"product_id": id
+		};
+		try {
+            const { data } = await addwishlistProduct(wishlistProduct);
+			dispatch(getCart(items));
+			showToastMessage();
+        } catch (error) {
+            console.error(error);
+        }
+	};
+	
+	function showToastMessage() {
+        toast.success('Product added successfully !', {
+            position: toast.POSITION.TOP_RIGHT
+        });
+    };
+
+	const fillCategory=(cat_id, catName)=>{
+		// dispatch(filterCategoryProduct(cat_id))
+		searchKey.push(catName);
+		const filterCategory = products.filter((item) => item.category_id == cat_id)
+		setCheckCategory(true);
+		setAllProduct(filterCategory);
+	}
+
+	const fillProductType=( proType_id, proTypeName )=>{
+		searchKey.push(proTypeName);
+		const filterCategory = products.filter((item) => item.product_type_id == proType_id)
+		setCheckCategory(true);
+		setAllProduct(filterCategory);
+	}
+
+	const filterAge=(age)=>{
+		searchKey.push(age);
+		if (checkCategory === true) {
+			const ages = currentItems.filter((item) => item.age == age);
+			setAllProduct(ages);
+		}else{
+			const ages = products.filter((item) => item.age == age)
+			setAllProduct(ages);
+		}
+	}
+
+	const filterGender=(gender)=>{
+		searchKey.push(gender);
+		if (checkCategory === true) {
+			const genders = currentItems.filter((item) => item.gander == gender);
+			setAllProduct(genders);
+		}else{
+			// const genders = products.filter((item) => item.gander == gender)
+			const genders = currentItems.filter((item) => item.gander == gender)
+			setAllProduct(genders);
+		}
+	}
+
+	const fillColor=(colorCode, colorName)=>{
+		searchKey.push(colorName);
+		if (checkCategory === true) {
+			const fillcolors = currentItems.filter((item) => item.color_id == colorCode);
+			setAllProduct(fillcolors);
+		}else{
+			const fillcolors = products.filter((item) => item.color_id == colorCode)
+			setAllProduct(fillcolors);
+		}
+	}
+
+	const clearAll=()=>{
+		router.push('/allProduct');
+		setAllProduct(products);
+		setSearchKey([]);
+	}
+
+    useEffect(() => {
+		getProduct();
+		getCategory();
+		getProductType();
+		getColor();
+		getData();
+    }, []);
+
+	useEffect(() => {
+		const searchParamKey = `${searchParams.category_name}`;
+		const searchTypeKey = `${searchParams.type_name}`;
+		getProductTypeFilter(searchTypeKey);
+		getProductCategoryFilter(searchParamKey);
+    }, [searchParams]);
+
+	return(
+		<>	
+				<div 
+					style={{
+						backgroundImage: `url(/image/banner-bg.png)`,
+						height: 'auto',
+						width: '100%',
+						backgroundRepeat: 'no-repeat',
+						backgroundSize: 'cover',
+						}}
+				>
+
+					{singleProducts ?
+						<div className='container mx-auto pt-5 px-4 md:px-[99px]'>
+							<button onClick={() => setSingleProducts(false)} className="flex items-center justify-center gap-2 rounded-full border-amber-400 font-bold pr-5 pl-3 py-2 border-0 bg-[#d4983d] hover:bg-amber-600 hover:border-amber-600 text-white transition-all ease-out duration-300"> <MdOutlineKeyboardDoubleArrowLeft className="text-[21px]" /> Back </button>
+						</div>
+					: ''}
+
+					{singleProducts ? 
+					<div>
+						{loading ? 
+							<SingleProductDetails passSingleProduct={singleProductShow} />
+							: 
+							<Loader/>
+						}
+					</div>
+					: 			
+					<div className='bodybg'>
+						<div className='container mx-auto pt-5 pb-20 px-4 md:px-[99px]'>
+
+							<div className="container">
+								<div className="flex flex-wrap gap-5 pb-5 border-b">
+								<ul className="text-xs space-y-2 font-normal text-gray-600">
+										<li className="relative dropdown inline-block">
+											<div className="mainDrropdownButton text-[#d4983d] hover_color flex items-center justify-between">Product Type <MdKeyboardArrowDown className="ml-1 mt-1 text-2xl drropdownArrow" /></div>
+											<div className="w-[150px] hidden drropdownMenu bg-white px-4 pb-4 pt-2 customeShadow top-7 absolute left-0 rounded-md">
+												{productTypes && productTypes.map((proType) => (
+													<div className="cursor-pointer" key={proType.id}>
+														<input name="proType" id="proType" className="mr-1 mt-2" type="radio" onClick={()=>fillProductType(proType.id, proType.name)} />
+														<label for="proType1"> {proType.name} </label><br></br>
+													</div>
+												))}
+											</div>
+										</li>
+									</ul>
+									<ul className="text-xs space-y-2 font-normal text-gray-600">
+										<li className="relative dropdown inline-block">
+											<div className="mainDrropdownButton text-[#d4983d] hover_color flex items-center justify-between">Category <MdKeyboardArrowDown className="ml-1 mt-1 text-2xl drropdownArrow" /></div>
+											<div className="w-[120px] hidden drropdownMenu bg-white px-4 pb-4 pt-2 customeShadow top-7 absolute left-0 rounded-md">
+												{categories && categories.map((cats) => (
+													<div className="cursor-pointer" key={cats.id}>
+														<input name="cats" id="cats" className="mr-1 mt-2" type="radio" onClick={()=>fillCategory(cats.id, cats.name)} />
+														<label for="cats1"> {cats.name} </label><br></br>
+													</div>
+												))}
+											</div>
+										</li>
+									</ul>
+									<ul className="text-xs space-y-2 font-normal text-gray-600">
+										<li className="relative dropdown inline-block">
+											<div className="mainDrropdownButton text-[#d4983d] hover_color flex items-center justify-between">Color <MdKeyboardArrowDown className="ml-1 mt-1 text-2xl drropdownArrow" /></div>
+											<div className="w-[120px] hidden drropdownMenu bg-white px-4 pb-4 pt-2 customeShadow top-7 absolute left-0 rounded-md">
+												{colors && colors.map((item) => (
+													<div className="cursor-pointer" key={item.id}>
+														<input name="cats" id="cats" className="mr-1 mt-2" type="radio" onClick={()=>fillColor(item.id, item.name)} />
+														<label for="cats1"> {item.name} </label><br></br>
+													</div>
+												))}
+											</div>
+										</li>
+									</ul>
+									<ul className="text-xs space-y-2 font-normal text-gray-600">
+										<li className="relative dropdown inline-block">
+											<div className="mainDrropdownButton text-[#d4983d] hover_color flex items-center justify-between" >Age <MdKeyboardArrowDown className="ml-1 mt-1 text-2xl drropdownArrow" /></div>
+											<div className="w-[120px] hidden drropdownMenu bg-white px-4 pb-4 pt-2 customeShadow top-7 absolute left-0 rounded-md">
+												<div className="cursor-pointer">
+													<input name="age" id="age1" className="mr-1 mt-2" type="radio" onClick={()=>filterAge('Adult')} />
+													<label for="age1">Adult</label><br></br>
+												</div>
+												<div className="cursor-pointer">
+													<input name="age" id="age2" className="mr-1 mt-2" type="radio" onClick={()=>filterAge('Children')} />
+													<label for="age2">Children</label><br></br>
+												</div>
+												<div className="cursor-pointer">
+													<input name="age" id="age3"  className="mr-1 mt-2" type="radio" onClick={()=>filterAge('Other')} />
+													<label for="age3">Other</label><br></br>
+												</div>
+											</div>
+										</li>
+									</ul>
+									<ul className="text-xs space-y-2 font-normal text-gray-600">
+										<li className="relative dropdown inline-block">
+											<div className="mainDrropdownButton text-[#d4983d] hover_color flex items-center justify-between" >Gender <MdKeyboardArrowDown className="ml-1 mt-1 text-2xl drropdownArrow" /></div>
+											<div className="w-[120px] hidden drropdownMenu bg-white px-4 pb-4 pt-2 customeShadow top-7 absolute left-0 rounded-md">
+												<div className="cursor-pointer">
+													<input name="gender" id="gender1" className="mr-1 mt-2" type="radio" onClick={()=>filterGender('Male')} />
+													<label for="gender1">Male</label><br></br>
+												</div>
+												<div className="cursor-pointer">
+													<input name="gender" id="gender2" className="mr-1 mt-2" type="radio" onClick={()=>filterGender('Female')} />
+													<label for="vehicle2">Female</label><br></br>
+												</div>
+												<div className="cursor-pointer">
+													<input name="gender" id="gender3" className="mr-1 mt-2" type="radio" onClick={()=>filterGender('Unisex')} />
+													<label for="gender3">Unisex</label><br></br>
+												</div>
+											</div>
+										</li>
+									</ul>
+								</div>
+								<div className="flex flex-wrap gap-1 mt-4 px-5">
+									{0<searchKey.length ?
+										<>
+											{searchKey.map((item)=>(
+												<div key={item.id} className="flex gap-2 w-22 items-center text-[10px] rounded-full px-2 py-1 mr-1 text-[#d4983d] border-gray-500 border hover:text-[#d4983d] hover:border-[#d4983d] transition-all ease-out duration-300">{item}</div>
+											))}
+											<button type="button" onClick={()=>clearAll()} className="flex gap-2 w-22 items-center text-[10px] rounded-full px-2 py-1 mr-1 text-[#d4983d] border-gray-500 border hover:text-[#d4983d] hover:border-[#d4983d] transition-all ease-out duration-300"> Clear All <RxCrossCircled className='text-[14px]' /></button>
+										</>
+									: '' }
+								</div>
+							</div>
+
+							{loading ? 
+								<div className="flex flex-wrap items-center">
+							
+								{currentItems && currentItems.map((items) => (
+									<div key={items.id} className="w-6/12 md:w-4/12 lg:w-3/12 xl:w-2/12">
+										<div className="p-3">
+											<div className="bg-white shadow-md hover:shadow-2xl rounded-lg p-3 text-center">
+
+												<div className="flex justify-end cursor-pointer">
+
+												{
+													1 <= cartProduct.length && cartProduct.some((p)=> p.id == items.id) ? 
+													(<MdOutlineFavorite onClick={() => removeWishlistProduct(items.id, items.product_id)} className="h-6 w-6 text-[#d4983d]" /> ) 
+													: cartProduct.some((p)=> p.product_id == items.id) ?
+													(<MdOutlineFavorite onClick={() => removeWishlistProduct(items.id, items.product_id)} className="h-6 w-6 text-[#d4983d]" /> ) 
+													: (<MdOutlineFavorite onClick={() => addToCart(items, items.id, ip)} className="h-6 w-6 text-gray-700" /> )
+												}
+												
+												{/* {
+													1 <= cartProduct.length && cartProduct.some((p)=> p.id == items.id) ? 
+													(<MdOutlineFavorite onClick={() => removeWishlistProduct(items.id)} className="h-6 w-6 text-[#d4983d]" /> ) 
+													:(<MdOutlineFavorite onClick={() => addToCart(items, items.id, ip)} className="h-6 w-6 text-gray-700" /> )
+												} */}
+												</div>
+
+												{
+													items.front_thumbnails &&(
+														<div className="h-[150px] w-full cursor-pointer" onClick={()=>showProduct(items.slug)}>
+															<Image src={items.front_thumbnails} className="mx-auto py-2"
+															width={200}
+															height={150}
+															style={{ height: '100%', width: 'auto' }} 
+															alt='img' />
+														</div>
+													)
+												}
+												
+												<hr /> 
+												{/* <Link href={`/product/${items.slug}`}> */}
+												<span className="cursor-pointer" onClick={()=>showProduct(items.slug)}>
+													<h6 className="hover:text-[#d4983d] text-sm font-bold pt-3">{items.name}</h6>
+													<p className="text-gray-700 ">{`${items.composition.substring(0, 30)}...`}</p>
+													<div className="flex justify-center">
+														<div style={{backgroundColor: items.color_code}} className="h-4 w-4 rounded-lg mx-auto mt-4"></div>
+													</div>
+												</span>
+											</div>
+										</div>
+									</div>
+								))} 
+
+								</div>
+							: 
+								<Loader/>
+							}
+
+						
+							<div className="flex justify-end">
+
+								{/* <ReactPaginate
+									breakLabel="..."
+									pageCount={1}
+									pageRangeDisplayed={1}
+									onPageChange={handlePageClick}
+									nextLabel=">>"
+									pageCount={pageCount}
+									previousLabel="<<"
+									renderOnZeroPageCount={null}
+									containerClassName="inline-flex items-center mt-12 justify-end"
+									pageClassName="h-7 px-3 text-white flex items-center justify-center text-indigo-600 transition-colors duration-150 focus:shadow-outline"
+									previousClassName="inline-flex items-center"
+									previousLinkClassName="h-7 px-3 text-white flex items-center justify-center text-indigo-600 transition-colors duration-150 rounded-l-lg focus:shadow-outline"
+									nextClassName="inline-flex"
+									nextLinkClassName="h-7 px-3 flex text-white items-center justify-center text-indigo-600 transition-colors duration-150 rounded-r-lg focus:shadow-outline"
+									activeClassName="bg-[#d4983d] rounded-md"
+								/> */}
+
+								<ReactPaginate
+									breakLabel="..."
+									nextLabel=">"
+									onPageChange={handlePageClick}
+									pageRangeDisplayed={1}
+									pageCount={pageCount}
+									previousLabel="<"
+									renderOnZeroPageCount={null}
+									containerClassName="pagination"
+									pageLinkClassName="page-num"
+									nextLinkClassName="page-num"
+									previousLinkClassName="page-num"
+									activeClassName="active"
+								/>
+								
+							</div>
+						</div>
+					</div>
+					}
+				</div>	
+			<LogoSlider />
+
+		</>
+		)
+}
+
+export default AllProduct;
+

@@ -1,0 +1,370 @@
+/* @import url('https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:ital,wght@0,200;0,300;0,400;0,500;0,600;0,700;1,300;1,400;1,500;1,600&family=Roboto:ital,wght@0,300;0,400;0,500;0,700;0,900;1,300;1,400;1,500;1,700&display=swap'); */
+@import url('https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:ital,wght@0,200;0,300;0,400;0,500;0,600;0,700;1,300;1,400;1,500;1,600&family=Inter:wght@200;300;400;500;600;700;800;900&family=Roboto:ital,wght@0,300;0,400;0,500;0,700;0,900;1,300;1,400;1,500;1,700&family=Ubuntu:ital,wght@0,300;0,400;0,500;0,700;1,300;1,400;1,500;1,700&display=swap');
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  --foreground-rgb: 0, 0, 0;
+  --background-start-rgb: 214, 219, 220;
+  --background-end-rgb: 255, 255, 255;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --foreground-rgb: 255, 255, 255;
+    --background-start-rgb: 0, 0, 0;
+    --background-end-rgb: 0, 0, 0;
+  }
+}
+
+body {
+  padding: 0;
+  margin: 0;
+  /* font-family: 'IBM Plex Sans', sans-serif !important; */
+  /* font-family: 'Roboto', sans-serif !important; */
+  font-family: 'IBM Plex Sans', sans-serif !important;
+  font-family: 'Inter', sans-serif !important;
+  font-family: 'Roboto', sans-serif !important;
+  font-family: 'Ubuntu', sans-serif !important;
+  /* color: rgb(var(--foreground-rgb));
+  background: linear-gradient(
+      to bottom,
+      transparent,
+      rgb(var(--background-end-rgb))
+    )
+    rgb(var(--background-start-rgb)); */
+    /* background-color: #eceff180; */
+}
+
+.container{
+  max-width: 1700px;
+}
+
+.cardContainer{
+  max-width: 1700px;
+}
+
+.slick-dots li.slick-active button:before{
+  color: orange !important;
+  font-size: 22px !important;
+}
+
+.slick-dots li{
+  bottom: -10px !important;
+}
+
+/* .text_align{
+  text-align: justify;
+  text-justify: inter-word;
+} */
+
+.main_color {
+  color: #f59e0b;
+}
+.bg_main {
+  background-color: #f59e0b;
+}
+.text_color_1 {
+  color: #f59e0b;
+}
+.hover_color:hover{
+  color: #999;
+  transition: 0.3s;
+}
+.slick-prev::before, .slick-next::before {
+  transition: 0.3s;
+  color: #99999946 !important;
+}
+
+/* .slick-prev:hover::before, .slick-prev:focus::before, .slick-next:hover::before, .slick-next:focus::before {
+  color: #fff !important;
+} */
+
+.slick-prev:hover::before, .slick-prev:focus::before, .slick-next:hover::before {
+  color: #f5cf26 !important;
+}
+
+.promise_overealy{
+background: linear-gradient(180deg, rgba(223, 222, 222, 0.08) 0%, rgba(38, 33, 24, 0.48) 18%, #000 100%, rgba(151, 149, 149, 0) 100%);
+}
+
+/* .bodybg{
+  background: linear-gradient(180deg, rgba(45, 79, 125, 0) 0%, rgba(189, 157, 96, 0) 35%, #e8b77930 61%, rgba(106, 64, 64, 0.07) 100%);
+} */
+
+/* .home_bg_overealy{
+background: linear-gradient(180deg, rgba(45, 79, 125, 0) 0%, rgba(189, 157, 96, 0.89) 5%, #e8b779e0 40%, rgba(106, 64, 64, 0.33) 100%);
+}
+
+.customeShadow{
+  box-shadow: rgba(0, 0, 0, 0.25) 0px 0.0625em 0.0625em, rgba(0, 0, 0, 0.25) 0px 0.125em 0.5em, rgba(255, 255, 255, 0.1) 0px 0px 0px 1px inset;
+}
+
+.customeHoverShadow:hover{
+  transition: 0.3s;
+  box-shadow: rgba(0, 0, 0, 0.25) 0px 0.0625em 0.0625em, rgba(0, 0, 0, 0.25) 0px 0.125em 0.5em, rgba(255, 255, 255, 0.1) 0px 0px 0px 1px inset;
+} */
+
+/*logo slider*/
+.logoSlider .slick-slider .slick-list .slick-track {
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center;
+ }
+
+/*drropdown button*/
+.mainDrropdownButton:hover .drropdownArrow{
+  rotate: 180deg;
+  transition: 0.6s;
+}
+
+.dropdown:hover .drropdownMenu{
+    display: block;
+}
+
+.whiteShadow{
+  box-shadow: rgba(14, 30, 37, 0.12) 0px 2px 4px 0px, rgba(14, 30, 37, 0.32) 0px 2px 16px 0px;
+}
+.team_image{
+  width: 130px;
+  height: 130px;
+  border-radius: 50%;
+}
+.text_details ul{
+  list-style-type: circle !important;
+  margin-left: 10px !important;
+  margin-top: 6px !important;
+}
+
+/*.home_bg_img {
+  position: absolute;
+  left: 0; 
+  right: 0;
+  top: 0; 
+  bottom: 0;
+  background: rgba(0,0,0,.5);
+}*/
+
+.react-tel-input .form-control {
+  padding: 10px 10px 15px 60px !important;
+  width: 100% !important;
+}
+.react-tel-input .form-control.invalid-number{
+  border: 1px solid #999 !important;
+}
+/*===================videoOverealy start========================*/
+.videoOverealy {
+  position: relative;
+  width: 100%;
+  margin: 0 auto;
+}
+
+.videoOverealy video {
+  width: 100%;
+  display: block;
+}
+
+.videoOverealy iframe {
+  width: 100% !important;
+}
+
+.videoOverealy:before {
+  content: '';
+  position: absolute;
+  background: linear-gradient(to bottom, rgb(211 208 208 / 24%), rgb(247, 247, 247));
+  top: 0;
+  right: 0;
+  bottom: 0;
+  left: 0;
+  z-index: 1;
+}
+
+.service_video iframe{
+  position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+}
+
+.service_video{
+  padding: 56.25% 0 0 0;
+}
+/*=====================videoOverealy end==================*/
+.title_font_size{
+  font-size: 32px;
+}
+
+.ourGroupVideo iframe{
+  width: 100%;
+  height: 600px;
+}
+
+/* animation */
+
+.homeImageAnimation:hover {
+  aspect-ratio: 1 / 0;
+  transition: 0.3s;
+  animation: 3s linear 0s infinite alternate rise, 3s linear 0s infinite alternate bounce;
+}
+
+
+@keyframes bounce {
+  from {
+    transform: translateX(-2vw);
+  }
+  to {
+    transform: translateX(3vw);
+  }
+}
+
+
+/* responsive aria  */
+@media only screen and (max-width: 1200px) {
+  .globe{
+    width: 400px !important;
+    height: 400px !important;
+  }
+}
+
+@media only screen and (max-width: 1024px) {
+  .globe{
+    width: 300px !important;
+    height: 300px !important;
+  }
+
+  .background-container {
+    height: 500px;
+  }
+}
+
+@media only screen and (max-width: 768px) {
+  .title_font_size{
+    font-size: 30px;
+  }
+
+  .background-container {
+    height: 400px;
+  }
+
+  .background-service {
+    height: 400px;
+  }
+}
+
+@media only screen and (max-width: 480px) {
+  .title_font_size{
+    font-size: 21px;
+  }
+  .text_align{
+    font-size: 17px !important;
+  }
+
+  .background-container {
+    height: 350px;
+  }
+}
+  
+
+.dropdown:hover .drropdownMenu{
+    display: block;
+}
+
+.homeVideo_bg{
+  position: absolute;
+  width: 100%;
+  top: 0;
+  left: 0;
+  height: 770px;
+  /* background: linear-gradient(to bottom, rgba(247, 243, 243, 0.9), rgb(247, 247, 247)); */
+}
+
+.react-tabs__tab-list .react-tabs__tab--selected{
+  background: transparent !important;
+  border: none !important;
+  /* padding: 4px 0px !important; */
+}
+.react-tabs__tab-list{
+  border-bottom: 0 !important;
+  display: flex !important;
+  gap: 5px !important;
+}
+
+.react-tabs__tab:focus {
+  outline: none !important;
+}
+
+.react-tabs__tab {
+  border: 0 !important;
+  border-bottom: none !important;
+  padding: 0 !important;
+}
+
+
+
+/* ================= */
+/* .globe {
+  width: 500px;
+  height: 500px;
+  background-image: url('/image/globe-1.jpg');
+  border-radius: 50%;
+  background-size: cover;
+  box-shadow: -20px -20px 50px 2px #000 inset, 0 0 20px #000;
+  animation: mvsp 15s linear alternate infinite;
+  margin-top: 55px;
+  }
+
+  @keyframes mvsp {
+    0% {
+      background-position: 0% 50%;
+    }
+    100% {
+      background-position: 100% 50%;
+    }
+  } */
+
+
+  .globe {
+  width: 500px;
+  height: 500px;
+  background-image: url('/image/globe-1.jpg');
+  border-radius: 50%;
+  background-size: cover;
+  box-shadow: -20px -20px 50px 2px #000 inset, 0 0 20px #000;
+  animation: rotateGlobe 15s linear infinite;
+  margin-top: 55px;
+}
+
+@keyframes rotateGlobe {
+  0% {
+    background-position: 0% 50%;
+  }
+  100% {
+    background-position: 100% 50%;
+  }
+}
+
+  
+
+
+  .background-container {
+    background-image: url('/image/bg-product-2.png');
+    /* height: 650px; */
+    /* height: auto; */
+    width: 100%;
+    background-repeat: no-repeat;
+    background-size: cover;
+    background-attachment: fixed;
+}
+
+.background-service {
+  background-image: url('/image/15.png');
+  height: 500px;
+  width: auto;
+  background-size: cover;
+  background-attachment: fixed;
+  border-radius: 8px;
+  -webkit-background-size: cover;
+  -moz-background-size: cover;
+}
